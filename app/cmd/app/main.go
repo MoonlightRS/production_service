@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"production_service/app/internal/app"
 	"production_service/app/internal/config"
 	"production_service/app/pkg/logging"
 )
