@@ -1,20 +1,27 @@
 package main
 
 import (
-	"log"
+	"context"
+
 	"production_service/app/internal/app"
 	"production_service/app/internal/config"
 	"production_service/app/pkg/logging"
 )
 
 func main() {
-	log.Print("config initializing")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	logging.Info(ctx, "config initializing")
 	cfg := config.GetConfig()
 
-	log.Print("logger initializing")
-	logger := logging.GetLogger()
-	app, err := app.NewApp(cfg, logger)
+	ctx = logging.ContextWithLogger(ctx, logging.NewLogger())
+
+	a, err := app.NewApp(ctx, cfg)
 	if err != nil {
-		logger.Fatal(err)
+		logging.Fatal(ctx, err)
 	}
+
+	logging.Info(ctx, "Running Application")
+	a.Run(ctx)
 }
